@@ -59,11 +59,11 @@
   <h1>Назви якнайбільше вулиць Житомира</h1>
   
   <div id="mode-selection">
-    <img src="photo1.jpg" class="main-photo" alt="Житомир">
-    <p style="font-size: 22px; margin: 30px 0;">Обери режим гри:</p>
-    <button class="timer-btn" onclick="startGame(30)">30 хвилин</button>
-    <button class="unlimited-btn" onclick="startGame(0)">Безлімітний режим</button>
-  </div>
+  <img src="photo1.jpg" class="main-photo" alt="Житомир">
+  <p style="font-size: 22px; margin: 30px 0;">Обери режим гри:</p>
+  <button class="timer-btn" id="btn30">30 хвилин</button>
+  <button class="unlimited-btn" id="btnUnlimited">Безлімітний режим</button>
+</div>
 
   <div id="game" style="display: none;">
     <div id="timer"></div>
@@ -394,21 +394,22 @@ function checkAchievements() {
       });
     }
 
- function startGame(minutes) {
-      document.getElementById('mode-selection').style.display = 'none';
-      gameDiv.style.display = 'block';
-      input.focus();
-      if (minutes === 0) isUnlimited = true;
-      else timeLeft = minutes * 60;
-      startTime = Date.now();
-      currentCombo = 0;
-      mistakes = 0;
-      initAchievements();
-      loadProgress();
-      startTimer();
-      input.addEventListener('input', checkStreet);
-      playMusic();
-    }
+function startGame(minutes) {
+  document.getElementById('mode-selection').style.display = 'none';
+  gameDiv.style.display = 'block';
+  input.focus();
+  if (minutes === 0) isUnlimited = true;
+  else timeLeft = minutes * 60;
+  startTime = Date.now();
+  currentCombo = 0;
+  mistakes = 0;
+  initAchievements();
+  loadAchievements();
+  loadProgress();
+  startTimer();
+  input.addEventListener('input', checkStreet);
+  playMusic();
+}	
 
     function toggleMusic() {
       if (isMusicPlaying) {
@@ -567,6 +568,14 @@ function checkAchievements() {
   }
   saveProgress();
 };
+
+	  document.getElementById('btn30').addEventListener('click', function() {
+  startGame(30);
+});
+
+document.getElementById('btnUnlimited').addEventListener('click', function() {
+  startGame(0);
+});
 
     loadProgress();
   </script>
