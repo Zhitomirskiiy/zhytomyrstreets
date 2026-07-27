@@ -265,14 +265,14 @@
     const bgMusic = document.getElementById('bgMusic');
     const musicBtn = document.getElementById('musicBtn');
 
-    const backgrounds = {
-      default: "linear-gradient(135deg, #1e3a8a, #312e81)",
-      фон1: "url('фон1.jpg')",
-      фон2: "url('Фон2.jpg')",
-      фон3: "url('Фон3.jpg')",
-      фон4: "url('Фон4.jpg')"
-    };
-
+  const backgrounds = {
+  default: "linear-gradient(135deg, #1e3a8a, #312e81)",
+  фон1: "url('фон1.jpg')",
+  фон2: "url('Фон2.jpg')",
+  фон3: "url('Фон3.jpg')",
+  фон4: "url('Фон4.jpg')",
+  фон5: "url('фон5.jpg')"   
+};
     function loadProgress() {
       const savedCoins = localStorage.getItem('zhytomyrCoins');
       const savedBg = localStorage.getItem('zhytomyrBackground');
@@ -506,6 +506,10 @@ function checkAchievements() {
       <strong>Фон 4</strong> — 250 
       <button onclick="buyBackground('фон4')" style="float:right;">Купити</button>
     </div>
+	<div style="margin:12px 0; padding:15px; background:rgba(255,255,255,0.1); border-radius:12px; text-align:left;">
+  <strong>???</strong> — 1500
+  <button onclick="buyBackground('фон5')" style="float:right;">Купити</button>
+</div>
 
     <button onclick="closeShop()" style="margin-top:20px;padding:14px 40px;background:#22c55e;color:black;border:none;border-radius:12px;cursor:pointer;width:100%;">Закрити</button>
   </div>`;
@@ -517,7 +521,7 @@ function checkAchievements() {
       if (modal) modal.remove();
     }
 
-    window.buyBackground = function(bg) {
+   window.buyBackground = function(bg) {
   let imageUrl = "";
   let price = 0;
 
@@ -525,6 +529,7 @@ function checkAchievements() {
   else if (bg === "фон2") { imageUrl = "url('Фон2.jpg')"; price = 200; }
   else if (bg === "фон3") { imageUrl = "url('Фон3.jpg')"; price = 220; }
   else if (bg === "фон4") { imageUrl = "url('Фон4.jpg')"; price = 250; }
+  else if (bg === "фон5") { imageUrl = "url('фон5.jpg')"; price = 1500; }  // ← додай цей рядок
   else if (bg === "default") {
     document.body.style.background = "linear-gradient(135deg, #1e3a8a, #312e81)";
     alert("✅ Класичний фон застосовано!");
@@ -532,6 +537,21 @@ function checkAchievements() {
     return;
   }
 
+  if (coins >= price) {
+    coins -= price;
+    document.body.style.background = imageUrl;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
+    coinsEl.innerHTML = `Крошники: <img src="kroshnik.jpg" width="28" height="28" style="vertical-align:middle;"> <strong>${coins}</strong>`;
+    alert("✅ Фон " + bg + " успішно змінено!");
+  } else {
+    alert("Недостатньо Крошників!");
+  }
+  saveProgress();
+};
+	  
   if (coins >= price) {
     coins -= price;
     document.body.style.background = imageUrl;
