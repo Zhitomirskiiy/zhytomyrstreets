@@ -552,22 +552,6 @@ function startGame(minutes) {
   }
   saveProgress();
 };
-	  
-  if (coins >= price) {
-    coins -= price;
-    document.body.style.background = imageUrl;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundAttachment = "fixed";
-
-    coinsEl.innerHTML = `Крошники: <img src="kroshnik.jpg" width="28" height="28" style="vertical-align:middle;"> <strong>${coins}</strong>`;
-    alert("✅ Фон " + bg + " успішно змінено!");
-  } else {
-    alert("Недостатньо Крошників!");
-  }
-  saveProgress();
-};
 
 	  document.getElementById('btn30').addEventListener('click', function() {
   startGame(30);
