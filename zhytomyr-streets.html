@@ -63,6 +63,7 @@
   <p style="font-size: 22px; margin: 30px 0;">Обери режим гри:</p>
   <button class="timer-btn" id="btn30">30 хвилин</button>
   <button class="unlimited-btn" id="btnUnlimited">Безлімітний режим</button>
+<button class="unlimited-btn" id="btnOldNames" style="background:#0ea5e9;">Режим: Старі назви</button>
 </div>
 
   <div id="game" style="display: none;">
@@ -326,6 +327,9 @@ const oldToNew = {
     let startTime = Date.now();
     let guessed = new Set();
 	let foundOldNames = new Set();
+	let isOldNamesMode = false;
+	let currentModernName = null;
+	let oldNamesList = [];
     let timeLeft = 0;
     let timerInterval;
     let isUnlimited = false;
@@ -651,13 +655,64 @@ function startGame(minutes) {
   }
   saveProgress();
 };
+	  
+	 function startOldNamesMode() {
+  isOldNamesMode = true;
+  document.getElementById('mode-selection').style.display = 'none';
+  gameDiv.style.display = 'block';
+ 
+  document.getElementById('timer').style.display = 'none';
+ 
+  oldNamesList = Object.values(oldToNew);
+ 
+  showNextOldName();
+ 
+  input.focus();
+  input.addEventListener('input', checkOldName);
+  playMusic();
+}
+
+function showNextOldName() {
+  if (oldNamesList.length === 0) {
+    alert(`Ти назвав усі старі назви!\nЗнайдено: ${guessed.size}`);
+    return;
+  }
+ 
+  const randomIndex = Math.floor(Math.random() * oldNamesList.length);
+  currentModernName = oldNamesList[randomIndex];
+ 
+  timerEl.textContent = currentModernName;
+  timerEl.style.color = "#38bdf8";
+  timerEl.style.fontSize = "36px";
+}
+
+function checkOldName() {
+  let value = input.value.trim().toLowerCase();
+  if (!value) return;
+
+  const correctOld = Object.keys(oldToNew).find(key => oldToNew[key] === currentModernName);
+
+  if (value === correctOld) {
+    guessed.add(currentModernName);
+    foundOldNames.add(correctOld);
+    addCoins(15);
+    updateTable();
+   
+    oldNamesList = oldNamesList.filter(name => name !== currentModernName);
+   
+    input.value = '';
+    showNextOldName();
+  }
+}
 
 	  document.getElementById('btn30').addEventListener('click', function() {
   startGame(30);
 });
-
 document.getElementById('btnUnlimited').addEventListener('click', function() {
   startGame(0);
+});
+document.getElementById('btnOldNames').addEventListener('click', function() {
+  startOldNamesMode();
 });
 
     loadProgress();
