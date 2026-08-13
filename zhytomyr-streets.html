@@ -656,22 +656,22 @@ function startGame(minutes) {
   saveProgress();
 };
 	  
-	 function startOldNamesMode() {
+	function startOldNamesMode() {
   isOldNamesMode = true;
   document.getElementById('mode-selection').style.display = 'none';
   gameDiv.style.display = 'block';
- 
-  document.getElementById('timer').style.display = 'none';
- 
+  
+  // document.getElementById('timer').style.display = 'none';  ← прибери або закоментуй цей рядок
+  
   oldNamesList = Object.values(oldToNew);
- 
+  
   showNextOldName();
- 
+  
   input.focus();
   input.addEventListener('input', checkOldName);
   playMusic();
 }
-
+	  
 function showNextOldName() {
   if (oldNamesList.length === 0) {
     alert(`Ти назвав усі старі назви!\nЗнайдено: ${guessed.size}`);
