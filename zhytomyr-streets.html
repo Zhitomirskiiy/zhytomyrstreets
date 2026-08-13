@@ -682,8 +682,12 @@ function showNextOldName() {
   currentModernName = oldNamesList[randomIndex];
  
   timerEl.textContent = currentModernName;
-  timerEl.style.color = "#38bdf8";
-  timerEl.style.fontSize = "36px";
+ timerEl.style.color = "#000000";
+timerEl.style.background = "#ffffff";
+timerEl.style.padding = "12px 24px";
+timerEl.style.borderRadius = "12px";
+timerEl.style.fontSize = "32px";
+timerEl.style.display = "inline-block";
 }
 
 function checkOldName() {
