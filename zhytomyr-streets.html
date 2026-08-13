@@ -243,6 +243,67 @@
       "Яроцького", "Ясеневий", "Ясний"
  ].sort();
 
+const oldToNew = {
+  "гагаріна": "Юрія Вороного",
+  "котовського": "Михайла Грушевського",
+  "рихальського": "Артільний",
+  "3 чкалова": "Івана Багряного",
+  "миколаївська": "Бальзаківська",
+  "чапаєва": "Степана Бандери",
+  "карла маркса": "Велика Бердичівська",
+  "радянська": "Академіка Векслера",
+  "максютова": "Вільський Шлях",
+  "яна гамарника": "Академіка Дашкевича",
+  "леваневського": "Дмитрівська",
+  "перша партизанська": "Добровольчих батальйонів",
+  "провіантська": "Довженка",
+  "сінна": "Домбровського",
+  "адмірала щастного": "Дмитра Донцова",
+  "сурина гора": "Захисників України",
+  "кірова": "Звягельська",
+  "піонерський проїзд": "Августа Іллінського",
+  "островського": "Святого Йоана Павла II",
+  "ворошилова": "Петра Калнишевського",
+  "красовського": "Героїв Базару",
+  "семенівська": "Кармелюка",
+  "костанаєва": "Каховська",
+  "черняховського": "Леха Качинського",
+  "леніна": "Київська",
+  "прорізна": "Козацька",
+  "якубовського": "Євгена Коновальця",
+  "цвинтарна": "Короленка",
+  "олега кошового": "Корольова",
+  "пушкінська": "Віктора Косенка",
+  "лютеранська": "Коцюбинського",
+  "лазо": "Миколи Лисенка",
+  "комуністична": "Львівська",
+  "постишева": "Северина Наливайка",
+  "московська": "Небесної Сотні",
+  "ватутіна": "Проспект Незалежності",
+  "тургенєва": "Олександра Олеся",
+  "пролетарська": "Скульптора Олішкевича",
+  "баранова": "Сергія Параджанова",
+  "карла лібкнехта": "Перемоги",
+  "щорса": "Покровська",
+  "білоруська": "Полку імені Кастуся Калиновського",
+  "піонерська": "Радивілівська",
+  "войкова": "Сотника Савінського",
+  "чехова": "Григорія Сковороди",
+  "бородія": "Івана Сльоти",
+  "михайловградська": "Східна",
+  "героїв сталінграда": "Театральна",
+  "22 з'їзду кпрс": "Бориса Тена",
+  "фрунзе": "Тополина",
+  "якіра": "Троянівська",
+  "прохорівська": "Лесі Українки",
+  "чернишевського": "Чорновола",
+  "косіора": "Чеська Крошня",
+  "монастирська": "Шевченка",
+  "червоноармійська": "Митрополита Андрея Шептицького",
+  "лермонтовська": "Шляхетна",
+  "сабурова": "Романа Шухевича"
+};
+
    let coins = 0;
     let currentBackground = "default";
     let achievements = [];
@@ -251,6 +312,7 @@
     let mistakes = 0;
     let startTime = Date.now();
     let guessed = new Set();
+	let foundOldNames = new Set();
     let timeLeft = 0;
     let timerInterval;
     let isUnlimited = false;
@@ -305,6 +367,9 @@
 		{ id: "speedster", name: "Скорострєл", desc: "Знайди 20 вулиць за перші 5 хвилин", icon: "⚡", type: "special" },
         { id: "combo_king", name: "Вінстрік", desc: "10 правильних відповідей поспіль", icon: "🔥", type: "special" },
         { id: "perfect", name: "Перфекціоніст", desc: "Знайди 50 вулиць без жодної помилки", icon: "✨", type: "special" },
+		{ id: "historian10", name: "Історик", desc: "Знайди 10 старих назв вулиць", icon: "📜", target: 10, type: "old" },
+		{ id: "historian20", name: "Краєзнавець", desc: "Знайди 20 старих назв вулиць", icon: "🏛️", target: 20, type: "old" },
+		{ id: "historian30", name: "Засновник Житомира", desc: "Знайди 30 старих назв вулиць", icon: "📚", target: 30, type: "old" },
 		{ id: "author_master", name: "Пасхалкоo", desc: "Знайди всі вулиці-пасхалки (9)", icon: "✍️", target: 9, type: "author" }
       ];
     }
@@ -349,6 +414,7 @@ function checkAchievements() {
 
     if (ach.type === "count" && count >= ach.target) unlocked = true;
     if (ach.type === "author" && foundAuthor >= ach.target) unlocked = true;
+	if (ach.type === "old" && foundOldNames.size >= ach.target) unlocked = true;
 
     if (unlocked) {
       unlockedAchievements.add(ach.id);
@@ -443,24 +509,42 @@ function startGame(minutes) {
       scoreEl.textContent = guessed.size;
     }
 
-    function checkStreet() {
-      let value = input.value.trim().toLowerCase();
-      if (!value) return;
-      value = value.replace(/вулиця|вул\.?|пров\.?|шосе|проспект|майдан|узвіз/gi, '').trim();
-      const found = allStreets.find(street => street.toLowerCase() === value);
-      if (found && !guessed.has(found)) {
-        guessed.add(found);
-        currentCombo++;
-        addCoins(10);
-        updateTable();
-        checkAchievements();
-        input.value = '';
-      } else {
-        currentCombo = 0;
-        mistakes++;
-      }
+  function checkStreet() {
+  let value = input.value.trim().toLowerCase();
+  if (!value) return;
+
+  // прибираємо типи вулиць
+  value = value.replace(/вулиця|вул\.?|пров\.?|шосе|проспект|майдан|узвіз/gi, '').trim();
+
+  let found = null;
+  let isOldName = false;
+
+  // Спочатку перевіряємо сучасну назву
+  found = allStreets.find(street => street.toLowerCase() === value);
+
+  // Якщо не знайшли — перевіряємо старі назви
+  if (!found && oldToNew[value]) {
+    found = oldToNew[value];
+    isOldName = true;
+  }
+
+  if (found && !guessed.has(found)) {
+    guessed.add(found);
+    
+    if (isOldName) {
+      foundOldNames.add(value); // зберігаємо стару назву
     }
 
+    currentCombo++;
+    addCoins(10);
+    updateTable();
+    checkAchievements();
+    input.value = '';
+  } else {
+    currentCombo = 0;
+    mistakes++;
+  }
+}
     function startTimer() {
       if (isUnlimited) {
         timerEl.textContent = "Безліміт";
