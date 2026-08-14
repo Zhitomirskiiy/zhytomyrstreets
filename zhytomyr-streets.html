@@ -76,6 +76,9 @@
     <button class="shop-btn" onclick="showShop()">🛒 Магазин</button>
 
     <input type="text" id="input" placeholder="Введи назву вулиці..." autocomplete="off">
+	<button id="skipBtn" onclick="skipOldName()" style="display:none; padding: 12px 24px; font-size: 17px; background:#ef4444; color:white; border:none; border-radius:12px; cursor:pointer; margin-left:10px;">
+  Пропустити
+</button>
     
     <div class="table-container">
       <table id="street-table">
@@ -660,6 +663,7 @@ function startGame(minutes) {
   isOldNamesMode = true;
   document.getElementById('mode-selection').style.display = 'none';
   gameDiv.style.display = 'block';
+document.getElementById('skipBtn').style.display = 'inline-block';
   
   // document.getElementById('timer').style.display = 'none';  ← прибери або закоментуй цей рядок
   
@@ -708,6 +712,15 @@ function checkOldName() {
     showNextOldName();
   }
 }
+function skipOldName() {
+  if (!currentModernName) return;
+
+  oldNamesList = oldNamesList.filter(name => name !== currentModernName);
+  input.value = '';
+  showNextOldName();
+}
+
+document.getElementById('btn30').addEventListener('click', function() {
 
 	  document.getElementById('btn30').addEventListener('click', function() {
   startGame(30);
